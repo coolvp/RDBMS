@@ -1,0 +1,32 @@
+create table client_mast
+(
+c_no number primary key,
+c_name varchar2(25) not null,
+city varchar2(25),
+totamt number
+);
+insert into client_mast values(1,'Vansh','Valsad',18000);
+insert into client_mast values(2,'Aniket','Valsad',15000);
+insert into client_mast values(3,'Moksh','Vapi',16000);
+insert into client_mast values(4,'Nirav','Navsari',14000);
+insert into client_mast values(5,'Nickul','Surat',12000);
+1. select * from client_mast
+2. select c_name,totamt from client_mast
+3. select c_no, c_name,totamt from client_mast order by totamt desc
+4. select * from client_mast where city not in ('Valsad','Navsari','Vapi')
+5. select * from client_mast where totamt between 10000 and 16000;
+6. alter table client_mast add (bal_due number)
+update client_mast set bal_due=5000 where c_no = 1 ;
+update client_mast set bal_due=5200 where c_no = 2 ;
+update client_mast set bal_due=3000 where c_no = 3;
+update client_mast set bal_due=7000 where c_no = 4;
+update client_mast set bal_due=7200 where c_no = 5;
+7. select * from client_mast where c_name like '__c___'
+8. update client_mast set totamt=totamt+1000 where c_name like 'A%'
+9. select c_name from client_mast where totamt in (select max(totamt) from client_mast)
+10. select * from client_mast where totamt like(select -min(-1*totamt ) from client_mast)
+11. select * from client_mast where totamt like(select max(totamt) from client_mast where city
+in 'Valsad')
+12. select count(*) from client_mast where city in 'Vapi'
+13. delete from client_mast where bal_due between 5000 and 7000;
+14. delete from client_mast where city='Valsad' or city='Vapi';
