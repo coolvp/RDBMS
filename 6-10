@@ -1,0 +1,76 @@
+6. begin
+update STENT
+set Stud_name = 'Nirav'
+where Stud_name = 'Nirvan';
+if sql%found then
+dbms_output.put_line('Record updated');
+else
+dbms_output.put_line('No records found');
+end if;
+end;
+
+7. set serveroutput on;
+declare
+Stud_Id STENT.Stud_Id%type;
+Stud_Name STENT.Stud_Name%type;
+City STENT.City%type;
+cursor c1 is select Stud_Id,Stud_Name,City from STENT;
+begin
+open c1;
+dbms_output.put_line('Stud_Id' || ' ' || 'Name' || ' ' || 'City');
+loop
+fetch c1 into Stud_Id,Stud_Name,City;
+exit when c1%notfound;
+dbms_output.put_line(Stud_Id || ' ' || Stud_Name || ' ' || City);
+end loop;
+close c1;
+end;
+
+8. set serveroutput on;
+declare
+Id worker.Worker_Id%type;
+name worker.name%type;
+Salary worker.salary%type;
+city worker.city%type;
+cursor c1 is select Worker_Id,name,salary,city from worker order by Salary desc;
+begin
+open c1;
+dbms_output.put_line('Id' || ' ' || 'Name' || ' '|| 'Salary' || ' '|| 'City');
+loop
+fetch c1 into Id,name,salary,city;
+dbms_output.put_line(Id || ' ' || name || ' ' || Salary || ' ' || city);
+exit when c1%rowcount=3;
+end loop;
+close c1;
+end;
+
+9. set serveroutput on;
+declare
+cursor c1 (N VARCHAR2) is select * from Worker where name = N;
+Nm Worker%rowtype;
+begin
+open c1('&N');
+fetch c1 into Nm;
+if c1%found then
+dbms_output.put_line('Worker ID: ' || Nm.Worker_id);
+dbms_output.put_line('Worker Name: ' || Nm.Name);
+dbms_output.put_line('Department: ' || Nm.Speacialised_In);
+else
+dbms_output.put_line('No worker found with the given name.');
+end if;
+close c1;
+end;
+
+10. DECLARE
+CURSOR c_students IS
+SELECT student_id, student_name, department, date_of_birth
+FROM students
+ORDER BY student_id;
+BEGIN
+FOR r_student IN c_students LOOP
+DBMS_OUTPUT.PUT_LINE(
+'ID: ' || r_student.student_id ||
+', Name: ' || r_student.student_name
+);
+END LOOP;
+END;
