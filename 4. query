@@ -1,0 +1,87 @@
+create table doct_mast
+(
+d_no varchar2(10) primary key check(d_no like'd%'),
+d_name varchar2(25),
+address varchar2(20),
+ph_no number
+);
+create table patient
+(
+p_no varchar2(10) primary key check(p_no like'p%'),
+p_name varchar2(25),
+address varchar2(20),
+ph_no number
+);
+create table ward_mast
+(
+w_no varchar2(10) primary key check(w_no like'w%'),
+w_name varchar2(25)
+);
+create table patient_detail
+(
+d_no varchar2(10) references doct_mast,
+p_no varchar2(10) references patient,
+w_no varchar2(10) references ward_mast,
+admit_date date,
+des_date date
+);
+INSERT ALL
+ INTO doct_mast VALUES ('d002', 'Dr. Priya Mehta', 'Mumbai',
+9812345678)
+ INTO doct_mast VALUES ('d003', 'Dr. Anil Sethi', 'Chennai',
+9823456781)
+ INTO doct_mast VALUES ('d004', 'Dr. Suman Agarwal', 'Kolkata',
+9834567892)
+ INTO doct_mast VALUES ('d005', 'Dr. Kavita Patel', 'Bangalore',
+9845678903)
+SELECT * FROM doct_mast;
+INSERT ALL
+ INTO patient VALUES ('p001', 'Amit Sharma', 'Delhi', 9877771111)
+ INTO patient VALUES ('p002', 'Sunita Verma', 'Mumbai', 9712345678)
+ INTO patient VALUES ('p003', 'Ravi Gupta', 'Chennai', 9723456781)
+ INTO patient VALUES ('p004', 'Pooja Nair', 'Kolkata', 9734567892)
+ INTO patient VALUES ('p005', 'Rahul Mehta', 'Bangalore', 9745678903)
+SELECT * FROM patient;
+INSERT ALL
+ INTO ward_mast VALUES ('w001', 'General Ward')
+ INTO ward_mast VALUES ('w002', 'ICU')
+ INTO ward_mast VALUES ('w003', 'Pediatrics')
+ INTO ward_mast VALUES ('w004', 'Maternity')
+ INTO ward_mast VALUES ('w005', 'Surgical')
+SELECT * FROM ward_mast;
+insert into patient_detail VALUES ('d01', 'p001', 'w001','1-Jul-2024','7-Jul-2024')
+insert into patient_detail VALUES ('d002', 'p002', 'w002','5-Jul-2024','15-Jul-2024')
+insert into patient_detail VALUES ('d003', 'p003', 'w003','8-Jul-2024',NULL)
+insert into patient_detail VALUES ('d004', 'p004', 'w004','10-Jul-2024','20-Jul-2024')
+insert into patient_detail VALUES ('d005', 'p005', 'w005','12-Jul-2024',NULL)
+SELECT * FROM patient_detail;
+1. select count(p_no),d_no from patient_detail group by d_no
+2. select count(*) from patient_details where des_date is NULL
+3. select w_no,count(*) from patient_details group by w_no
+4. select * from patient where p_no in(select p_no from patient_details where w_no='w005' and
+admit_date = '12-JUL-24')
+5. select * from patient_detail pd
+INNER JOIN doct_mast dm ON pd.d_no = dm.d_no
+INNER JOIN patient pat ON pd.p_no = pat.p_no
+INNER JOIN ward_mast wm ON pd.w_no = wm.w_no
+WHERE
+ TO_CHAR(pd.admit_date, 'MM') IN ('01', '02') -- '01' for January, '02' for February
+ORDER BY
+ pd.admit_date;
+6. SELECT * FROM patient_detail pd WHERE (pd.des_date IS NOT NULL AND (pd.des_date -
+pd.admit_date) > 5) OR (pd.des_date IS NULL AND (SYSDATE - pd.admit_date) > 5)
+ORDER BY pd.p_no;
+7. SELECT * FROM patient_detail pd
+INNER JOIN patient pat ON pd.p_no = pat.p_no
+WHERE pd.admit_date >= SYSDATE – 7 ORDER BY pat.p_name;
+8. SELECT * FROM patient_detail pd
+RIGHT JOIN doct_mast dm ON pd.d_no = dm.d_no -- RIGHT JOIN to include doctors with 0
+patients GROUP BY dm.d_no, dm.d_name ORDER BY dm.d_name;
+9. SELECT * FROM doct_mast ORDER BY d_name DESC;
+10. SELECT * FROM patient_detail pd
+INNER JOIN doct_mast dm ON pd.d_no = dm.d_no
+GROUP BY dm.d_no, dm.d_name HAVING COUNT(DISTINCT pd.p_no) = 1 ORDER BY
+dm.d_name;
+11. SELECT * FROM doct_mast WHERE (LENGTH(UPPER(d_name))-
+LENGTH(REPLACE(UPPER(d_name), 'A', ''))) >= 2
+ORDER BY d_name;
