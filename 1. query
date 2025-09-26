@@ -1,0 +1,30 @@
+create table stude
+(
+S_no number primary key,
+S_Name varchar2(25),
+City varchar2(25),
+m1 number,
+m2 number,
+m3 number,
+total number,
+per number,
+result varchar2(20)
+);
+1.insert into stude values(15,'Vansh','Valsad',40,49,48,null,null,null);
+ insert into stude values(16,'Veera','Valsad',33,35,34,null,null,null);
+ insert into stude values(30,'Prem','Surat',30,32,34,null,null,null);
+ insert into stude values(34,'Parshwa','Vapi',30,36,37,null,null,null);
+ insert into stude values(25,'Nirav','Valsad',38,40,37,null,null,null);
+ select * from stude
+2.update stude set total=(m1+m2+m3);
+ update stude set per=((total*100)/150);
+ update stude set result='fail' where m1<35 or m2<35 or m3<35
+ update stude set result='pass' where m1>35 or m2>35 or m3>35
+3.select * from stude where S_Name like '_a%'
+4.select * from stude where City='Valsad' and S_Name like '%a'
+5.select * from stude where City='Valsad' or City='Surat'
+6.select * from stude where per>60
+7.select * from stude where S_no between 15 and 30
+8.select * from stude where per between 60 and 70
+9.select S_Name from stude where City not in ('Valsad') ;
+10.update stude set total=total+10 where City = ('Valsad') ;
