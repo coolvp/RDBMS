@@ -1,0 +1,32 @@
+create table emp_mast
+(
+emp_no number primary key,
+e_name varchar2(25),
+salary number,
+city varchar2(25),
+d_name varchar2(25)
+);
+insert into emp_mast values(1,'Vansh',18000,'Valsad','IT');
+insert into emp_mast values(2,'Prem',15000,'Vapi','Accounts');
+insert into emp_mast values(3,'Moksh',17000,'Surat','Admin');
+insert into emp_mast values(4,'Nirav',20000,'Mumbai','HR');
+insert into emp_mast values(5,'Yagnik’,14000,'Daman','Sales');
+1. select * from emp_mast
+2. select emp_no,e_name,salary from emp_mast;
+3. select * from emp_mast where city='Valsad';
+4. select * from emp_mast order by salary asc;
+5. select * from emp_mast where city in ('Valsad','Surat','Vapi');
+6. select * from emp_mast where salary between 10000 and 15000;
+7. select max(salary) from emp_mast;
+8. select count (*) from emp_mast;
+9. select sum(salary) from emp_mast;
+10. select max(Salary) from emp where Salary<(select max(Salary) from emp)
+11. select * from emp_mast where city not in 'Valsad'
+12. select * from emp_mast where e_name like '____'
+13. select count(*),d_name from emp_mast group by d_name
+14. select count(*) ,d_name from emp_mast group by d_name having d_name = 'IT', select
+count(*) from emp_mast where d_name like 'IT'
+15. update emp_mast set salary=salary+1000 where city='Valsad'
+16. alter table emp_mast add (contact_no number(12))
+17. select e_name from emp_mast where e_name like 'V____'
+18. select city from emp_mast where e_name='Moksh'
