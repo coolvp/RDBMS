@@ -1,0 +1,137 @@
+21. CREATE OR REPLACE TRIGGER mark_passing_students
+BEFORE INSERT ON students
+FOR EACH ROW
+BEGIN
+-- Check if student is passing (marks >= 40)
+IF :NEW.marks >= 40 THEN
+:NEW.is_passing := 'Y';
+ELSE
+:NEW.is_passing := 'N';
+END IF;
+END;
+
+22. CREATE OR REPLACE TRIGGER job_dml_log_trigger
+AFTER INSERT OR UPDATE OR DELETE ON job
+FOR EACH ROW
+DECLARE
+v_operation VARCHAR2(10);
+v_job_id VARCHAR2(10);
+BEGIN
+IF INSERTING THEN
+v_operation := 'INSERT';
+v_job_id := :NEW.job_id;
+ELSIF UPDATING THEN
+v_operation := 'UPDATE';
+v_job_id := :NEW.job_id;
+ELSE
+v_operation := 'DELETE';
+v_job_id := :OLD.job_id;
+END IF;
+INSERT INTO job_log VALUES (job_log_seq.NEXTVAL, v_operation, v_job_id, SYSDATE);
+END;
+
+23. CREATE OR REPLACE PACKAGE stud AS
+PROCEDURE filter(p_city IN students.city%TYPE);
+PROCEDURE filter(p_course IN students.course%TYPE);
+PROCEDURE filter(p_city IN students.city%TYPE,
+p_course IN students.course%TYPE);
+END stud;
+//Package Body
+CREATE OR REPLACE PACKAGE BODY stud AS
+PROCEDURE print_row(
+p_id IN students.student_id%TYPE,
+p_name IN students.student_name%TYPE,
+p_city IN students.city%TYPE,
+p_course IN students.course%TYPE
+) IS
+BEGIN
+DBMS_OUTPUT.PUT_LINE(
+'ID=' || p_id ||
+', NAME=' || p_name ||
+', CITY=' || p_city ||
+', COURSE=' || p_course
+);
+END print_row;
+PROCEDURE filter(p_city IN students.city%TYPE) IS
+BEGIN
+FOR r IN (
+SELECT student_id, student_name, city, course
+FROM students
+WHERE UPPER(city) = UPPER(p_city)
+ORDER BY student_name
+) LOOP
+print_row(r.student_id, r.student_name, r.city, r.course);
+END LOOP;
+END filter;
+PROCEDURE filter(p_course IN students.course%TYPE) IS
+BEGIN
+FOR r IN (
+SELECT student_id, student_name, city, course
+FROM students
+WHERE UPPER(course) = UPPER(p_course)
+ORDER BY student_name
+) LOOP
+print_row(r.student_id, r.student_name, r.city, r.course);
+END LOOP;
+END filter;
+PROCEDURE filter(p_city IN students.city%TYPE,
+p_course IN students.course%TYPE) IS
+BEGIN
+FOR r IN (
+SELECT student_id, student_name, city, course
+FROM students
+WHERE UPPER(city) = UPPER(p_city)
+AND UPPER(course) = UPPER(p_course)
+ORDER BY student_name
+) LOOP
+print_row(r.student_id, r.student_name, r.city, r.course);
+END LOOP;
+END filter;
+END stud;
+
+24. SET SERVEROUTPUT ON;
+BEGIN
+stud.filter('Mumbai'); -- by city
+stud.filter(p_course => 'BSc CS'); -- by course
+stud.filter('Mumbai', 'BSc CS'); -- by city and course
+END;
+//Write a package named PKG containing a function to count students by city and a
+procedure to determine if a number is positive, negative, or zero
+CREATE OR REPLACE PACKAGE pkg IS
+FUNCTION count_students_by_city(p_city IN VARCHAR2) RETURN NUMBER;
+PROCEDURE classify_number(p_num IN NUMBER, p_result OUT VARCHAR2);
+END pkg;
+//Package Body
+CREATE OR REPLACE PACKAGE BODY pkg IS
+FUNCTION count_students_by_city(p_city IN VARCHAR2) RETURN NUMBER IS
+v_count NUMBER;
+BEGIN
+SELECT COUNT(*)
+INTO v_count
+FROM students
+WHERE UPPER(city) = UPPER(p_city);
+RETURN v_count;
+END count_students_by_city;
+PROCEDURE classify_number(p_num IN NUMBER, p_result OUT VARCHAR2) IS
+BEGIN
+IF p_num > 0 THEN
+p_result := 'POSITIVE';
+ELSIF p_num < 0 THEN
+p_result := 'NEGATIVE';
+ELSE
+p_result := 'ZERO';
+END IF;
+DBMS_OUTPUT.PUT_LINE('Number is ' || p_result);
+END classify_number;
+END pkg;
+//Calling the package
+SET SERVEROUTPUT ON;
+DECLARE
+v_cnt NUMBER;
+v_label VARCHAR2(10);
+BEGIN
+v_cnt := pkg.count_students_by_city('BOSTON');
+DBMS_OUTPUT.PUT_LINE('Students in BOSTON: ' || v_cnt);
+pkg.classify_number(-5, v_label);
+DBMS_OUTPUT.PUT_LINE('Classification: ' || v_label);
+END;
