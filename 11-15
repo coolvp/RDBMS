@@ -1,0 +1,93 @@
+11. SET SERVEROUTPUT ON;
+DECLARE
+v_emp_id NUMBER := 101; -- which employee
+v_increase NUMBER := 500; -- flat increase amount
+v_limit NUMBER := 5000; -- maximum allowed new wage
+v_old_wage NUMBER;
+v_new_wage NUMBER;
+ex_limit EXCEPTION; -- user-defined exception
+BEGIN
+SELECT wage INTO v_old_wage
+FROM employees
+WHERE emp_id = v_emp_id;
+v_new_wage := v_old_wage + v_increase;
+IF v_new_wage > v_limit THEN
+RAISE ex_limit; -- raise user-defined exception
+END IF;
+UPDATE employees
+SET wage = v_new_wage
+WHERE emp_id = v_emp_id;
+DBMS_OUTPUT.PUT_LINE('Updated. Old=' || v_old_wage || ', New=' || v_new_wage);
+EXCEPTION
+WHEN ex_limit THEN
+DBMS_OUTPUT.PUT_LINE('New wage ' || v_new_wage || ' exceeds limit ' || v_limit);
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('Employee not found: ' || v_emp_id);
+END;
+
+12. create or replace function oddoreven(l number) return number is
+begin
+if mod (l,2)=0 then
+dbms_output.put_line('Even');
+else
+dbms_output.put_line('Odd');
+end if;
+return 0;
+end;
+//Calling the function
+set serveroutput on;
+declare
+i varchar2(15);
+begin
+i:= oddoreven(2);
+end;
+
+13. create or replace function factorial(n number)
+return number is
+begin
+if n <= 1 then
+return 1;
+end if;
+return n * factorial(n - 1);
+end;
+//Calling the function
+declare
+i number;
+begin
+i:=factorial(5);
+dbms_output.put_line(i);
+end;
+
+14. create or replace function numb(n number)
+return varchar2 is
+begin
+if n<0 then
+return 'Negative';
+elsif n>0 then
+return 'Positive';
+else
+return 'Zero';
+end if;
+end;
+//Calling the function
+declare
+a number;
+begin
+a:= :a;
+dbms_output.put_line('The number is: ' || numb(a));
+end;
+
+15. create or replace function counter return number
+is
+job_count number;
+begin
+select count(*) into job_count from jobs where status = 'incomplete' or status = 'complete';
+return job_count;
+end;
+//Calling the function
+declare
+a number;
+begin
+a:=counter();
+dbms_output.put_line(a);
+end;
